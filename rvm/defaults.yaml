@@ -3,5 +3,5 @@ rvm:
   default: 2.0.0-p481
   rubies:
     2.0.0-p481:
-      - user: None
-      - env: None
+      user: None
+      env: None

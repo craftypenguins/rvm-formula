@@ -31,11 +31,11 @@ rvm_requirements:
 
 # install rubies with Salt state rvm.installed
 
-{% for ruby_version, ruby_row in salt['pillar.get]('rvm:rubies', {}).items() %}
+{% for ruby_version, ruby_row in salt['pillar.get']('rvm:rubies:', { } ).items() %}
 
 ruby-{{ ruby_version }}:
   rvm.installed:
-    - user: {{ rvm.user }}
+    - user: {{ ruby_row.user }}
     {% if ruby_version.default is defined and rvm.default == ruby_version %}
     - default: True
     {% endif %}
