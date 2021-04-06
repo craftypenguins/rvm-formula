@@ -1,0 +1,12 @@
+rvm:
+  default: 2.0.0-p481
+  rubies:
+    2.0.0-p481:
+      user: None
+      env: None
+      gems:
+        - rails-4.0.3
+        - bundler
+        - backup
+        - whenever
+
