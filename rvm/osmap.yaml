@@ -7,13 +7,12 @@ Debian:
     - gawk
     - sed
     - curl
-    - git-core
+    - git
     - build-essential
     - openssl
-    - libreadline6
-    - libreadline6-dev
+    - libreadline7
+    - libreadline-dev
     - curl
-    - git-core
     - zlib1g
     - zlib1g-dev
     - libssl-dev
