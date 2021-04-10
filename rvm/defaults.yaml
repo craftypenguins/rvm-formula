@@ -1,7 +1,7 @@
 rvm:
   blugger: /etc/rvmrc
-  default: 2.0.0-p481
+  default: 2.0.0
   rubies:
-    2.0.0-p481:
+    2.0.0:
       user: None
       env: None

@@ -11,7 +11,7 @@ rvm_user:
     - name: rvm
     - gid: 2000
 
-rvm-install-gpgkey:
+rvm_install_gpgkey:
   cmd:
     - run
     - user: root
@@ -25,26 +25,42 @@ rvm_install:
     - name: curl -sSL https://get.rvm.io | bash -s stable --quiet-curl --rails
     - onlyif: test ! -f /usr/local/rvm/bin/rvm
 
+
 rvm_requirements:
   cmd.run:
     - name: /usr/local/rvm/bin/rvm requirements
 
 # install rubies with Salt state rvm.installed
 
-{% for ruby_version, ruby_row in salt['pillar.get']('rvm:rubies:', { } ).items() %}
+{# {% for ruby_version, ruby_row in rvm.rubies|dictsort %} #}
+{% for ruby_version, ruby_row in salt['pillar.get']('rvm:rubies', {}).items() %}
+
+{# Not working--errors with duplicate saltID's when the same user is declared for multiple rubyversions
+
+{% if ruby_row.user is defined %}
+{% set ruby_user_home = salt['user.info'](ruby_row.user).home %}
+rvm_{{ ruby_row.user }}_bashrc:
+  cmd:
+    - run
+    - name: echo "[[ -s {{ ruby_user_home }}/.rvm/scripts/rvm ]] && source {{ ruby_user_home }}/.rvm/scripts/rvm" >> {{ ruby_user_home }}/.bashrc
+    - user: {{ ruby_user_home }}
+    - unless: grep ".rvm/scripts/rvm" {{ ruby_user_home }}/.bashrc
+{% endif %}
+#}
 
 ruby-{{ ruby_version }}:
   rvm.installed:
+    - name: ruby-{{ ruby_version }}
     - user: {{ ruby_row.user }}
-    {% if ruby_version.default is defined and rvm.default == ruby_version %}
+    {% if rvm.default is defined and rvm.default == ruby_version %}
     - default: True
     {% endif %}
     - require:
-      - cmd: rvm
+      - rvm_install
 
 # install gems
 {% if 'gems' in ruby_row %}
-{% for gems in ruby_row.gems.items() %}
+{% for gem in ruby_row.gems|list %}
 
 {% set gem_r = gem.split("-") %}
 {% set gem_version = "" %}
@@ -52,14 +68,16 @@ ruby-{{ ruby_version }}:
   {% set gem_version = "-v " + gem_r[1] %}
 {% endif %}
 
-rvm-install-gems-{{ruby_version}}-{{gem}}:
+rvm_install_gems_{{ruby_version}}-{{gem}}:
   cmd:
     - run
     - user: root
     - name: "bash -l -c 'rvm use {{ruby_version}}  &&  gem install {{gem_r[0]}} {{gem_version}}'"
     - unless: "bash -l -c 'rvm use {{ruby_version}}  &&  gem list | grep {{gem_r[0]}}'"
+    - require:
+      - rvm_install
 
-# for gems 
+# for gem 
 {% endfor %}
 
 # if gems

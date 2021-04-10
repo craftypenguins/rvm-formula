@@ -1,12 +1,19 @@
-rvm:
+#!yamlex
+
+rvm: !aggregate
   default: 2.0.0-p481
-  rubies:
-    2.0.0-p481:
-      user: None
-      env: None
+  rubies: !aggregate
+    # get the available versions from `rvm list known`
+    2.0.0-p648:
+      #user: deployer   # not working
       gems:
         - rails-4.0.3
         - bundler
         - backup
         - whenever
+    3.0.0:
+      #user: deployer   # not working
+      gems:
+        - rails-4.0.3
+        - bundler
 

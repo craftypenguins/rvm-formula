@@ -3,7 +3,7 @@
 
 {% set os = salt['grains.filter_by'](
   osmap,
-  merge=salt['pillar.get']('rvm:lookup', {}),
+  merge=salt['pillar.get']('rvm.lookup', {}),
 )
 %}
 
